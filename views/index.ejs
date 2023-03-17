@@ -15,6 +15,8 @@
 
     <canvas></canvas>
 
+    <div id ="imgdiv" style="display:none;">
+    </div>
     <image src="" id="image_id" onchange="console.log(count)"></image>
         
     <script src="https://main.codingfamily.co.kr/content/user/predefined1/sprites_fbx/info.js"></script>
@@ -48,33 +50,41 @@
 
     var imageName = "Defeat"
 
-    var imageWidth = img_data[imageName]["width"]
-    var imageHeight = img_data[imageName]["height"]
-    var imageItems = img_data[imageName]["items"]
+    var imageLeftWidth = img_data[imageName]["width"]
     var imageCropWidth = img_data[imageName]["width"] / img_data[imageName]["items"]
     var imageCropHeight = img_data[imageName]["height"]
     var imageCropSize = imageCropWidth * Math.floor(cuttingSize / imageCropWidth)
-    var imageCropitems = Math.ceil(imageWidth / imageCropSize)
+    var imageCropitems = Math.ceil(img_data[imageName]["width"]/ imageCropSize)
 
     var canvas_background = document.createElement('canvas');
     const ctx_background = canvas_background.getContext('2d')
 
     
 
-    var bigImage = CreateImage("https://main.codingfamily.co.kr/content/user/predefined1/sprites_fbx/" + imageName + ".png")
+    var bigImage = SplitImage("https://main.codingfamily.co.kr/content/user/predefined1/sprites_fbx/" + imageName + ".png")
 
     bigImage.crossOrigin = 'Anonymous'
 
 
-    function CreateImage(imageSrc) {
+    function SplitImage(imageSrc) {
+        const imgdiv = document.getElementById("imgdiv")
+
         const image = new Image()
         image.src = imageSrc
+
+        imgdiv.appendChild(image)
+        
         image.onload = function()
         {
+            
             for(var i=0;i<imageCropitems;i++)
             {
-                canvas_background.width  = imageCropSize;
                 canvas_background.height = imageCropHeight;
+
+                if(imageLeftWidth <= imageCropSize)
+                    canvas_background.width  = imageLeftWidth;
+                else
+                    canvas_background.width = imageCropSize
 
                 ctx_background.fillStyle = 'white'
                 ctx_background.fillRect(0,0,ctx_background.width,ctx_background.height)
@@ -94,8 +104,12 @@
                 var img = new Image()
                 img.src = canvas_background.toDataURL('image/png')
 
-                imageArray.push(img);
+                imageArray.push({image:img,width:canvas_background.width,height:imageCropHeight});
+
+                imageLeftWidth -= imageCropSize;
             }
+
+            image.parentNode.removeChild(image)
 
             console.log(imageArray)
         }
