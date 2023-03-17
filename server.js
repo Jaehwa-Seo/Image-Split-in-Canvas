@@ -2,7 +2,7 @@ const { app } = require("./app");
 
 var http = require('http').Server(app);
 
-const port = 5678;
+const port = 5679;
 
 function start_server() {    
     // [INFO] Start server
