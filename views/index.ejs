@@ -10,19 +10,115 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-      }
-      </style>
-        <canvas></canvas>
-        <!-- <script src="https://main.codingfamily.co.kr/content/user/odel/sprites_fbx/info.js"></script> -->
+        }
+    </style>
+
+    <canvas></canvas>
+
+    <image src="" id="image_id" onchange="console.log(count)"></image>
+        
+    <script src="https://main.codingfamily.co.kr/content/user/predefined1/sprites_fbx/info.js"></script>
 
 </head>
 <body style="background-color: #A3C6C4;"></body>
 
 
 <script>
+    function SetCanvasRatio() {
+        if(screenWidth/screenHeight < window.innerWidth / window.innerHeight)
+        {
+            canvas.style.height = window.innerHeight + "px"
+            canvas.style.width = ""
+        }
+        else
+        {
+            canvas.style.width = window.innerWidth + "px"
+            canvas.style.height = ""
+        }
+    }
 
+    // Canvas setting
+    
 </script>
 
+<script>
+    var cuttingSize = 8192
+
+    var imageArray = [];
+
+    var imageName = "Defeat"
+
+    var imageWidth = img_data[imageName]["width"]
+    var imageHeight = img_data[imageName]["height"]
+    var imageItems = img_data[imageName]["items"]
+    var imageCropWidth = img_data[imageName]["width"] / img_data[imageName]["items"]
+    var imageCropHeight = img_data[imageName]["height"]
+    var imageCropSize = imageCropWidth * Math.floor(cuttingSize / imageCropWidth)
+    var imageCropitems = Math.ceil(imageWidth / imageCropSize)
+
+    var canvas_background = document.createElement('canvas');
+    const ctx_background = canvas_background.getContext('2d')
+
+    
+
+    var bigImage = CreateImage("https://main.codingfamily.co.kr/content/user/predefined1/sprites_fbx/" + imageName + ".png")
+
+    bigImage.crossOrigin = 'Anonymous'
+
+
+    function CreateImage(imageSrc) {
+        const image = new Image()
+        image.src = imageSrc
+        image.onload = function()
+        {
+            for(var i=0;i<imageCropitems;i++)
+            {
+                canvas_background.width  = imageCropSize;
+                canvas_background.height = imageCropHeight;
+
+                ctx_background.fillStyle = 'white'
+                ctx_background.fillRect(0,0,ctx_background.width,ctx_background.height)
+
+                ctx_background.drawImage(
+                    bigImage,
+                    imageCropSize * i,
+                    0,
+                    imageCropSize,
+                    imageCropHeight,
+                    0,
+                    0,
+                    imageCropSize,
+                    imageCropHeight
+                )
+
+                var img = new Image()
+                img.src = canvas_background.toDataURL('image/png')
+
+                imageArray.push(img);
+            }
+
+            console.log(imageArray)
+        }
+        
+        return image
+    }
+    
+    var ratio = 1
+
+    var screenWidth = imageCropSize 
+    var screenHeight = imageCropHeight
+
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d',{ alpha: false })
+
+    canvas.width = screenWidth  
+    canvas.height = screenHeight  
+
+    SetCanvasRatio()
+
+    
+
+</script>
 
 
 </body>
